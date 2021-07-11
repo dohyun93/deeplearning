@@ -62,3 +62,63 @@ plt.imshow(image[0, :, :, 0], 'gray')
 plt.subplot(1, 2, 2)
 plt.imshow(output[0, :, :, 0], 'gray')
 plt.show()
+
+#========================================================================
+
+# weight 불러오기.
+# layer.get_wegiths()
+weight = layer.get_weights() # weight, bias 를 반환함에 주의
+print("weight shape: ", weight[0].shape, "\nbias shape: ", weight[1].shape)
+# weight shape:  (3, 3, 1, 5)
+# bias shape:  (5,)
+
+plt.figure(figsize=(15, 5))
+plt.subplot(1, 3, 1)
+plt.hist(output.numpy().ravel(), range=[-2, 2])
+plt.ylim(0, 100)
+plt.subplot(132)
+plt.title("used filter" + str(weight[0].shape))
+plt.imshow(weight[0][:, :, 0, 0], 'gray')
+plt.subplot(133)
+plt.title(output.shape)
+plt.imshow(output[0, :, :, 0], 'gray')
+plt.colorbar()
+plt.show()
+
+# Activation function
+# tf.keras.layers.ReLU()
+act_layer = tf.keras.layers.ReLU()
+act_output = act_layer(output)
+print(act_output)
+print(np.min(act_output), np.max(act_output))
+# np.min(act_output), np.max(act_output) -> 0.0, 223.75673
+
+plt.figure(figsize=(15, 5))
+plt.subplot(121)
+plt.hist(act_output.numpy().ravel(), range=[-2, 2])
+plt.ylim(0, 100)
+
+plt.subplot(122)
+plt.title(act_output.shape)
+plt.imshow(act_output[0, :, :, 0], 'gray')
+plt.show()
+
+## Pooling
+# 이미지 압축.
+# tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=(2, 2), padding='SAME')
+pool_layer = tf.keras.layers.MaxPool2D(pool_size=(2, 2), strides=(2, 2), padding='SAME')
+pool_output = pool_layer(act_output)
+print(act_output.shape)
+print(pool_output.shape)
+print(pool_output)
+
+plt.figure(figsize=(15, 5))
+plt.subplot(121) # same as plt.subplot(1, 2, 1)
+plt.hist(pool_output.numpy().ravel(), range=[-2, 2])
+plt.ylim(0, 100)
+
+plt.subplot(122)
+plt.title(pool_output.shape)
+plt.imshow(pool_output[0, :, :, 0], 'gray')
+plt.colorbar()
+plt.show()
